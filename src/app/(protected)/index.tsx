@@ -1,5 +1,6 @@
 import { View, Text, Image, Button } from 'react-native';
 import { useAuth, useUser } from '@clerk/clerk-expo';
+import { Link } from 'expo-router';
 
 export default function HomeScreen() {
   const { user } = useUser();
@@ -25,7 +26,7 @@ export default function HomeScreen() {
 
       <Text style={{ fontSize: 18 }}>Only logged in users can see this</Text>
 
-      <Button title='Sign out' onPress={() => signOut()} />
+      <Link href={'./(client)'}>Client</Link>
     </View>
   );
 }

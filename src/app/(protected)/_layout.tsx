@@ -1,6 +1,7 @@
 import { Slot, Redirect } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { ActivityIndicator, View } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 
 export default function ProtectedLayout() {
   console.log('Protected layout');
@@ -19,5 +20,9 @@ export default function ProtectedLayout() {
     return <Redirect href='/sign-in' />;
   }
 
-  return <Slot />;
+  return (
+    <PaperProvider>
+      <Slot />
+    </PaperProvider>
+  );
 }

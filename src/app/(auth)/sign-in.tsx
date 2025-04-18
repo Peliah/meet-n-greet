@@ -81,7 +81,6 @@ export default function SignInScreen() {
       }
     }
 
-    console.log('Sign in: ', data.email, data.password);
   };
 
   return (
