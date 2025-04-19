@@ -27,7 +27,7 @@ export interface Event {
 export interface Booking {
     id: string;
     eventId: string;
-    userId: string;
+    userId?: string;
     status: 'confirmed' | 'cancelled' | 'pending';
     bookingDate: number;
     attendeeCount?: number;
@@ -39,4 +39,13 @@ export interface EventFilters {
     fromDate: string | null;
     toDate: string | null;
     location: string | null;
+}
+
+export interface BookingWithEvent extends Booking {
+    event: {
+        title: string;
+        date: string;
+        location: string;
+        imageUri?: string;
+    };
 }

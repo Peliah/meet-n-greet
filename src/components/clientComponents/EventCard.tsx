@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, Pressable, Image } from 'react-native';
-import { Text, Surface, Chip } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { router } from 'expo-router';
 import { formatDate, formatTime } from '@/utils/dateUtils';
 import { Event } from '@/types';
+import { neoStyles } from '@/app/constants/neoStyles';
 
 interface EventCardProps {
     event: Event;
@@ -11,155 +12,202 @@ interface EventCardProps {
 
 export function EventCard({ event }: EventCardProps): React.JSX.Element {
     const navigateToDetails = (): void => {
-        router.push(`/client/events/${event.id}`);
+        router.push({
+            pathname: `/(client)/events/${event.id}`,
+            params: {
+                title: event.title,
+                imageUri: event.imageUri
+            }
+        });
     };
 
     return (
-        <Pressable onPress={navigateToDetails}>
-            <Surface style={styles.card} elevation={1}>
-                {event.imageUri ? (
-                    <Image source={{ uri: event.imageUri }} style={styles.image} />
-                ) : (
-                    <View style={[styles.image, styles.imagePlaceholder]}>
-                        <Text style={styles.placeholderText}>{event.title.charAt(0)}</Text>
-                    </View>
-                )}
+        <Pressable
+            onPress={navigateToDetails}
+            style={({ pressed }) => [
+                styles.cardContainer,
+                pressed && styles.pressed
+            ]}
+        >
+            <View style={styles.card}>
+                <View style={styles.imageContainer}>
+                    {event.imageUri ? (
+                        <Image source={{ uri: event.imageUri }} style={styles.image} />
+                    ) : (
+                        <View style={styles.imagePlaceholder}>
+                            <Text style={styles.placeholderText}>
+                                {event.title.charAt(0).toUpperCase()}
+                            </Text>
+                        </View>
+                    )}
+                </View>
 
-                <View style={styles.contentContainer}>
-                    <View style={styles.headerRow}>
+                <View style={styles.content}>
+                    <View style={styles.header}>
                         <Text style={styles.title} numberOfLines={1}>
-                            {event.title}
+                            {event.title.toUpperCase()}
                         </Text>
-                        {event.bookedCount >= event.capacity ? (
-                            <Chip compact mode="flat" style={styles.fullChip}>
-                                Full
-                            </Chip>
-                        ) : null}
+                        {event.bookedCount >= event.capacity && (
+                            <View style={styles.fullBadge}>
+                                <Text style={styles.fullBadgeText}>SOLD OUT</Text>
+                            </View>
+                        )}
                     </View>
 
                     <Text style={styles.description} numberOfLines={2}>
                         {event.description}
                     </Text>
 
-                    <View style={styles.detailsContainer}>
-                        <View style={styles.detailRow}>
-                            <Text variant="labelMedium" style={styles.detailLabel}>
-                                Date
-                            </Text>
-                            <Text variant="bodyMedium" style={styles.detailValue}>
+                    <View style={styles.detailsGrid}>
+                        <View style={styles.detailItem}>
+                            <Text style={styles.detailLabel}>DATE</Text>
+                            <Text style={styles.detailValue}>
                                 {formatDate(event.date)}
                             </Text>
                         </View>
 
-                        <View style={styles.detailRow}>
-                            <Text variant="labelMedium" style={styles.detailLabel}>
-                                Time
-                            </Text>
-                            <Text variant="bodyMedium" style={styles.detailValue}>
+                        <View style={styles.detailItem}>
+                            <Text style={styles.detailLabel}>TIME</Text>
+                            <Text style={styles.detailValue}>
                                 {formatTime(event.time)}
                             </Text>
                         </View>
 
-                        <View style={styles.detailRow}>
-                            <Text variant="labelMedium" style={styles.detailLabel}>
-                                Location
-                            </Text>
-                            <Text variant="bodyMedium" style={styles.detailValue} numberOfLines={1}>
-                                {event.location}
+                        <View style={styles.detailItem}>
+                            <Text style={styles.detailLabel}>LOCATION</Text>
+                            <Text style={styles.detailValue} numberOfLines={1}>
+                                {event.location.toUpperCase()}
                             </Text>
                         </View>
                     </View>
 
-                    {event.category ? (
-                        <View style={styles.categoryContainer}>
-                            <Chip compact mode="outlined" style={styles.categoryChip}>
-                                {event.category}
-                            </Chip>
-                        </View>
-                    ) : null}
+                    {/* Footer */}
+                    <View style={styles.footer}>
+                        {event.category && (
+                            <View style={styles.categoryBadge}>
+                                <Text style={styles.categoryText}>
+                                    {event.category.toUpperCase()}
+                                </Text>
+                            </View>
+                        )}
 
-                    <View style={styles.capacityContainer}>
-                        <Text variant="labelSmall" style={styles.capacityText}>
-                            {event.capacity - event.bookedCount} spots left
+                        <Text style={styles.capacityText}>
+                            {event.capacity - event.bookedCount} SPOTS LEFT
                         </Text>
                     </View>
                 </View>
-            </Surface>
+            </View>
         </Pressable>
     );
 }
 
 const styles = StyleSheet.create({
+    cardContainer: {
+        marginBottom: 24,
+        shadowColor: '#000',
+        shadowOffset: { width: 8, height: 8 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+    },
+    pressed: {
+        transform: [{ translateX: 4 }, { translateY: 4 }],
+        shadowOffset: { width: 4, height: 4 },
+    },
     card: {
-        borderRadius: 16,
-        overflow: 'hidden',
-        marginBottom: 16,
-        backgroundColor: '#fff',
+        borderWidth: 3,
+        borderColor: '#000',
+        backgroundColor: neoStyles.background,
+    },
+    imageContainer: {
+        height: 160,
+        borderBottomWidth: 3,
+        borderColor: '#000',
     },
     image: {
-        height: 140,
         width: '100%',
-        backgroundColor: '#e0e0e0',
+        height: '100%',
     },
     imagePlaceholder: {
-        alignItems: 'center',
+        flex: 1,
+        backgroundColor: neoStyles.accent,
         justifyContent: 'center',
-        backgroundColor: '#6200ee20',
+        alignItems: 'center',
     },
     placeholderText: {
         fontSize: 48,
-        color: '#6200ee',
-        fontWeight: 'bold',
+        fontWeight: '900',
+        color: '#000',
     },
-    contentContainer: {
-        padding: 16,
+    content: {
+        padding: neoStyles.padding,
     },
-    headerRow: {
+    header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 12,
     },
     title: {
         fontSize: 18,
-        fontWeight: '700',
+        fontWeight: '900',
         flex: 1,
+        letterSpacing: -0.5,
     },
-    fullChip: {
-        backgroundColor: '#f44336',
+    fullBadge: {
+        backgroundColor: neoStyles.primary,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderWidth: 2,
+        borderColor: '#000',
         marginLeft: 8,
     },
+    fullBadgeText: {
+        color: '#FFF',
+        fontWeight: '800',
+        fontSize: 12,
+    },
     description: {
-        color: '#666',
+        fontSize: 14,
+        lineHeight: 20,
+        marginBottom: 16,
+        color: '#333',
+    },
+    detailsGrid: {
         marginBottom: 16,
     },
-    detailsContainer: {
-        marginBottom: 12,
-    },
-    detailRow: {
-        flexDirection: 'row',
-        marginBottom: 4,
-    },
-    detailLabel: {
-        width: 70,
-        color: '#888',
-    },
-    detailValue: {
-        flex: 1,
-        fontWeight: '500',
-    },
-    categoryContainer: {
+    detailItem: {
         flexDirection: 'row',
         marginBottom: 8,
     },
-    categoryChip: {
-        backgroundColor: 'transparent',
-        borderColor: '#6200ee',
+    detailLabel: {
+        fontWeight: '800',
+        width: 80,
+        fontSize: 14,
     },
-    capacityContainer: {
-        alignItems: 'flex-end',
+    detailValue: {
+        fontWeight: '600',
+        flex: 1,
+        fontSize: 14,
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    categoryBadge: {
+        borderWidth: 2,
+        borderColor: '#000',
+        backgroundColor: neoStyles.secondary,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+    },
+    categoryText: {
+        fontWeight: '800',
+        fontSize: 12,
     },
     capacityText: {
-        color: '#6200ee',
+        fontWeight: '800',
+        color: neoStyles.primary,
+        fontSize: 14,
     },
 });
