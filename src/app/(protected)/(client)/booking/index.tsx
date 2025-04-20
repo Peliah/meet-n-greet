@@ -118,7 +118,7 @@ export default function BookingHistoryScreen() {
                     </Text>
                     <Button
                         mode="contained"
-                        onPress={() => router.push('/client/events')}
+                        onPress={() => router.push('/(client)/events')}
                         style={styles.browseButton}
                         labelStyle={styles.browseButtonText}
                     >

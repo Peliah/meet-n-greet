@@ -16,8 +16,8 @@ export const useUserRole = (): Role | null => {
 
         try {
             // Access role directly from user publicMetadata
-            const userRole = user.publicMetadata?.role as Role;
-            setRole(userRole || 'client');
+            const userRole = user.unsafeMetadata?.role as Role;
+            setRole(userRole);
         } catch (error) {
             console.error('Error fetching role:', error);
             setRole(null);

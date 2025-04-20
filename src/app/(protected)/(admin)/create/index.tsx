@@ -65,15 +65,6 @@ export default function CreateEventScreen() {
         options={{
           title: 'CREATE EVENT',
           headerTitleStyle: styles.headerTitle,
-          headerLeft: () => (
-            <Button
-              onPress={() => router.back()}
-              style={styles.backButton}
-              labelStyle={styles.buttonText}
-            >
-              CANCEL
-            </Button>
-          ),
         }}
       />
       <ScrollView
@@ -231,6 +222,13 @@ export default function CreateEventScreen() {
           >
             CREATE EVENT
           </Button>
+          <Button
+            onPress={() => router.back()}
+            style={styles.backButton}
+            labelStyle={styles.buttonText}
+          >
+            CANCEL
+          </Button>
         </View>
       </ScrollView>
     </View>
@@ -256,7 +254,8 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#000',
     backgroundColor: neoStyles.primary,
-    marginLeft: 8,
+    paddingVertical: neoStyles.padding / 2,
+    marginTop: neoStyles.margin * 2,
   },
   form: {
     marginTop: neoStyles.margin * 2,

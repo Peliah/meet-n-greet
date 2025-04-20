@@ -24,3 +24,27 @@ export const neoStyles = {
     padding: 16,
     margin: 8,
 };
+
+export const COLORS = {
+    primary: '#FF3366',
+    secondary: '#00CC88',
+    accent: '#FFEE32',
+    background: '#F8F9FA',
+    text: '#000000',
+    white: '#FFFFFF',
+    black: '#000000',
+    inactive: '#939393',
+};
+
+export const SHADOWS = {
+    neoBrutalism: {
+        shadowColor: '#000000',
+        shadowOffset: {
+            width: 8,
+            height: 8,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 10,
+    },
+};

@@ -18,6 +18,8 @@ export default function ProtectedLayout() {
       return;
     }
 
+    console.log(role);
+
     if (role) {
       router.replace(role === 'admin' ? '/(admin)/events' : '/(client)/events');
     }

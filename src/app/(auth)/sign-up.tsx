@@ -59,14 +59,19 @@ export default function SignUpScreen() {
     if (!isLoaded) return;
 
     try {
+      console.log('Sign up data: ', data);
+
       await signUp.create({
         emailAddress: data.email,
         password: data.password,
+        unsafeMetadata: {
+          role: data.role,
+        },
 
       });
 
       await signUp.update({
-        publicMetadata: {
+        unsafeMetadata: {
           role: data.role,
         },
       });
