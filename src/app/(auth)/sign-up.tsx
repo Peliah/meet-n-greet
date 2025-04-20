@@ -4,23 +4,24 @@ import {
   KeyboardAvoidingView,
   Platform,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import CustomInput from '@/components/CustomInput';
 import CustomButton from '@/components/CustomButton';
-
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, router } from 'expo-router';
-
 import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import SignInWith from '@/components/SignInWith';
 
+// Updated schema to include role
 const signUpSchema = z.object({
   email: z.string({ message: 'Email is required' }).email('Invalid email'),
   password: z
     .string({ message: 'Password is required' })
     .min(8, 'Password should be at least 8 characters long'),
+  role: z.enum(['admin', 'client']),
 });
 
 type SignUpFields = z.infer<typeof signUpSchema>;
@@ -41,12 +42,18 @@ export default function SignUpScreen() {
     control,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<SignUpFields>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      role: 'client', // Default role
+    },
   });
 
   const { signUp, isLoaded } = useSignUp();
+  const selectedRole = watch('role');
 
   const onSignUp = async (data: SignUpFields) => {
     if (!isLoaded) return;
@@ -55,6 +62,13 @@ export default function SignUpScreen() {
       await signUp.create({
         emailAddress: data.email,
         password: data.password,
+
+      });
+
+      await signUp.update({
+        publicMetadata: {
+          role: data.role,
+        },
       });
 
       await signUp.prepareVerification({ strategy: 'email_code' });
@@ -101,6 +115,46 @@ export default function SignUpScreen() {
           placeholder='Password'
           secureTextEntry
         />
+
+        {/* Role selection */}
+        <View style={styles.roleContainer}>
+          <Text style={styles.roleLabel}>Select your role:</Text>
+          <View style={styles.roleButtons}>
+            <TouchableOpacity
+              style={[
+                styles.roleButton,
+                selectedRole === 'client' && styles.selectedRoleButton,
+              ]}
+              onPress={() => setValue('role', 'client')}
+            >
+              <Text
+                style={[
+                  styles.roleButtonText,
+                  selectedRole === 'client' && styles.selectedRoleButtonText,
+                ]}
+              >
+                Client
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.roleButton,
+                selectedRole === 'admin' && styles.selectedRoleButton,
+              ]}
+              onPress={() => setValue('role', 'admin')}
+            >
+              <Text
+                style={[
+                  styles.roleButtonText,
+                  selectedRole === 'admin' && styles.selectedRoleButtonText,
+                ]}
+              >
+                Admin
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {errors.root && (
           <Text style={{ color: 'crimson' }}>{errors.root.message}</Text>
         )}
@@ -130,6 +184,36 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   link: {
+    color: '#4353FD',
+    fontWeight: '600',
+  },
+  roleContainer: {
+    marginVertical: 10,
+  },
+  roleLabel: {
+    marginBottom: 8,
+    fontSize: 16,
+  },
+  roleButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  roleButton: {
+    flex: 1,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  selectedRoleButton: {
+    borderColor: '#4353FD',
+    backgroundColor: '#4353FD20',
+  },
+  roleButtonText: {
+    color: '#333',
+  },
+  selectedRoleButtonText: {
     color: '#4353FD',
     fontWeight: '600',
   },
