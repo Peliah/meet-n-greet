@@ -27,6 +27,7 @@ export default function HomeScreen() {
       <Text style={{ fontSize: 18 }}>Only logged in users can see this</Text>
 
       <Link href={'./(client)/events'}>Client</Link>
+      <Link href={'./(admin)/events'}>admin</Link>
     </View>
   );
 }
